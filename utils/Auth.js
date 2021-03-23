@@ -9,6 +9,7 @@ const auth = (req,res,next) => {
       if (err){
         res.redirect("/login");
       }
+      req.user = username;
       next();
     });
 };

@@ -65,7 +65,7 @@ const userOnline = require('./models/userOnline.model');
 io.on('connection', async (socket) => {
     console.log('New User Logged In with ID '+socket.id);
 
-    console.log( socket.request.headers.cookie)
+    console.log(socket.handshake.query.userId);
 
     //io.sockets.emit('broadcast',{ description: clients + ' clients connected!'});
     //socket.to(res.ID).emit('message',dataElement);

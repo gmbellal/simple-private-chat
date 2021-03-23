@@ -49,9 +49,7 @@ const loginController = {
 
 
     chat (req, res) {
-        const payloadData = { pageTitle: 'Web Chat : Signup' };
-        console.log("THE SESSION: "+req.session.get('jwtSession'));
-  
+        const payloadData = { pageTitle: 'Web Chat : Signup', userId: req.user.user_id };
         res.render('chat/chat', payloadData );
     },
 

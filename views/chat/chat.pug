@@ -23,5 +23,12 @@ block content
     .script 
         script(src="/socket.io/socket.io.js")
         script(src="js/main.js")
+    
+    script.
+
+        socket = io ( { query: { userId: "#{userId}" } });
+
+
+    
         
 		    
