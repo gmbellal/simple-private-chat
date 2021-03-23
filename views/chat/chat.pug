@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+    header.chat-header
+        h2 <i class="fas fa-comments"></i> Web Chat
+    
+    main.chat-main
+        div.chat-sidebar
+            <input id="from" type="text" placeholder="Enter Your Name.." required/>
+            <input id="to" type="text" placeholder="Enter Who You are Sending to.." required/>
+            <button class="btn2" onclick="storeDetails()"><i class="fas fa-paper-plane"></i> Done </button>
+
+        div.chat-messages
+            div.message
+
+
+    div.chat-form-container
+        form#chat-form
+            input#msg(type="text" placeholder="Enter Message" required autocomplete="off")
+            button( class="btn" )
+                <i class="fas fa-paper-plane"></i> Send
+
+    .script 
+        //- script(src="/socket.io/socket.io.js")
+        //- script(src="js/main.js")
+        
+		    

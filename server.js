@@ -30,7 +30,13 @@ const loginController = require('./controllers/login.controller')
 
 //Routers----------------------------
 app.get("/",  loginController.login);
+app.get("/login",  loginController.login);
+app.post("/login",  loginController.login);
 app.get("/sign-up",  loginController.signup);
+app.post("/sign-up",  loginController.signup);
+
+//chat
+app.get("/live-chat",  loginController.chat);
 
 
 
