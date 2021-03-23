@@ -19,12 +19,22 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(express.static(path.join(__dirname,'front')));
+app.set('view engine', 'pug')
 
 
-//router
-const itemRouter = require('./routers/item');
 
-app.use('/api', itemRouter);
+//Controllers-----------------------
+const loginController = require('./controllers/login.controller')
+
+
+
+//Routers----------------------------
+app.get("/",  loginController.login);
+app.get("/sign-up",  loginController.signup);
+
+
+
+
 
 
 
