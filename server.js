@@ -35,34 +35,53 @@ app.post("/login",  loginController.login);
 app.get("/sign-up",  loginController.signup);
 app.post("/sign-up",  loginController.signup);
 
+
 //chat
 app.get("/live-chat",  loginController.chat);
 
 
 
+//models
+const User = require('./models/user.model');
+const userOnline = require('./models/userOnline.model');
 
 
 
 
-
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     console.log('New User Logged In with ID '+socket.id);
 
     //io.sockets.emit('broadcast',{ description: clients + ' clients connected!'});
     //socket.to(res.ID).emit('message',dataElement);
     //socket.emit('message',dataElement); //emits message back to the user for display
 
-
     //specific function
     socket.on('login',(data) => { 
 
     });  
-
-
     //on connection disconnect
-    socket.on('disconnect', () => {
-      
+    socket.on('disconnect', async () => {
+        console.log("logout a user: "+socket.id );
+        await userOnline.deleteOne( {'user.id': 1 } );
     });
+
+    //make online------------
+    const isOnline = await userOnline.findOne( {'user.id': 1 } );
+    if(isOnline){
+      await userOnline.updateOne( {'user.id': 1 }, { socketSession: socket.id } );
+    }else{
+      var connected = new userOnline({ 
+        user: { id: 1, fullname: 'Bellal Hossain', username: 'bellal' },
+        socketSession: socket.id
+      });
+      connected.save(function(err, doc) {
+        if(err)console.log("failed to connect");
+        else console.log("New user connected");
+      });
+    }
+
+
+
     
 });
 
