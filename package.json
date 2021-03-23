@@ -1,0 +1,21 @@
+{
+  "name": "simple-web-chat",
+  "version": "1.0.0",
+  "description": "A simple web chat using node express mongodb with socket.io",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "bellal",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.1",
+    "socket.io": "^4.0.0"
+  }
+}
