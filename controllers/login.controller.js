@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const userOnline = require('../models/userOnline.model');
 
@@ -11,8 +12,16 @@ const loginController = {
             return res.render('user/login', payloadData );
         }else{            
             const query = { 'username': req.body.username, 'password': req.body.password };
-            const user =  await User.find( query );
-            if(user.length == 1 ){
+            const user =  await User.findOne( query );
+            if(user ){
+                const token = jwt.sign({
+                        user_id: user._id,
+                        username: user.username,
+                        fullname: user.fullname
+                    }, "jgafugy$#54%%ygfsygfff", { expiresIn: '7 days' }
+                );
+                //crerate Session
+                req.session.set('jwtSession', token);
                 res.redirect('/live-chat');
             }else{
                 //
@@ -41,7 +50,16 @@ const loginController = {
 
     chat (req, res) {
         const payloadData = { pageTitle: 'Web Chat : Signup' };
+        console.log("THE SESSION: "+req.session.get('jwtSession'));
+  
         res.render('chat/chat', payloadData );
+    },
+
+
+    logout (req, res) {
+        req.session.forget('jwtSession');
+        const payloadData = { pageTitle: 'Web Chat : Login', errorMgs: 'Logout Successfully' };
+        return res.render('user/login', payloadData );
     }
 
 
