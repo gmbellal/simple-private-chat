@@ -8,6 +8,7 @@ const io = socketio(server);
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { auth } = require('./utils/Auth');
+const jwt = require('jsonwebtoken');
 const PORT = 3000;
 const HOST_NAME = 'localhost';
 const DATABASE_NAME = 'web-chat';
@@ -63,28 +64,38 @@ const userOnline = require('./models/userOnline.model');
 
 
 io.on('connection', async (socket) => {
-    console.log('New User Logged In with ID '+socket.id);
 
-    console.log(socket.handshake.query.userId);
+  const userId = socket.handshake.query.userId;
+
+    //console.log("User Connected: "+ userId);
 
     //io.sockets.emit('broadcast',{ description: clients + ' clients connected!'});
     //socket.to(res.ID).emit('message',dataElement);
     //socket.emit('message',dataElement); //emits message back to the user for display
 
     //specific function
-    socket.on('login',(data) => { 
+    // socket.on('login',(data) => { 
 
-    });  
+    // });  
     //on connection disconnect
-    socket.on('disconnect', async () => {
-        console.log("logout a user: "+socket.id );
-        await userOnline.deleteOne( {'user.id': 1 } );
-    });
+   
 
     //make online------------
-    const isOnline = await userOnline.findOne( {'user.id': 1 } );
+
+    jwt.verify(token, "jgafugy$#54%%ygfsygfff", (err, username) => {
+      if (err){
+        res.redirect("/login");
+      }
+      req.user = username;
+      next();
+    });
+
+
+
+    const isOnline = await userOnline.findOne( {'user.id': userId } );
     if(isOnline){
       await userOnline.updateOne( {'user.id': 1 }, { socketSession: socket.id } );
+      console.log("Connection Resume...");
     }else{
       var connected = new userOnline({ 
         user: { id: 1, fullname: 'Bellal Hossain', username: 'bellal' },
@@ -97,6 +108,12 @@ io.on('connection', async (socket) => {
     }
 
 
+
+
+    socket.on('disconnect', async () => {
+        console.log("logout a user: "+socket.id );
+        await userOnline.deleteOne( {'user.id': userId } );
+    });
 
     
 });
