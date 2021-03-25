@@ -124,7 +124,7 @@ a {
 	background-color: var(--dark-color-a);
 }
 
-.chat-form-container form {
+.chat-form-container div {
 	display: flex;
 }
 
@@ -214,6 +214,31 @@ a {
 
 
 
-.list-item{
-	border: 1px solid #fff;
+
+.online-user-list{
+	list-style-type: none;
+    margin: 5px 0px;
+    cursor: pointer;
+    background: #fde4e4;
+    padding: 4px 2px 4px 8px;
+    border-radius: 6px;
+}
+
+.online-user-list:hover{
+	background: #5cb85c;
+}
+
+.online-user-list:hover .display-name{
+	color: #fff;
+}
+
+.avatar {
+	vertical-align: middle;
+	width: 40px;
+	height: auto;
+	border-radius: 50%;
+  }
+.display-name{
+	margin-left: 10px;
+	color: #7286ff;
 }

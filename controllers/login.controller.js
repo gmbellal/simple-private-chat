@@ -49,7 +49,7 @@ const loginController = {
 
 
     chat (req, res) {
-        const payloadData = { pageTitle: 'Web Chat : Signup', userId: req.user.user_id };
+        const payloadData = { pageTitle: 'Web Chat : Signup', userId: req.user.user_id, fullname: req.user.fullname };
         res.render('chat/chat', payloadData );
     },
 

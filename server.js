@@ -12,12 +12,13 @@ const jwt = require('jsonwebtoken');
 const PORT = 3000;
 const HOST_NAME = 'localhost';
 const DATABASE_NAME = 'web-chat';
+const moment = require('moment');
 mongoose.connect('mongodb://' + HOST_NAME + '/' + DATABASE_NAME, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true} );
 
 
 //session
 var NodeSession = require('node-session');
-var nodeSession = new NodeSession({secret: 'Q3UBzdH9GEfiRCTKbi5MTPyChpzXLsTD'});
+var nodeSession = new NodeSession({secret: 'Q3UBzdH9GEfiRCTKbi5MTPyChpzXLsTD', 'lifetime': 84000000, 'expireOnClose': false, 'cookie': 'my_node_session', });
 function session(req, res, next){
     nodeSession.startSession(req, res, next);
 }
@@ -57,6 +58,7 @@ app.get("/live-chat", auth,  loginController.chat);
 //models
 const User = require('./models/user.model');
 const userOnline = require('./models/userOnline.model');
+const Chat = require('./models/chat.model');
 
 
 
@@ -77,7 +79,42 @@ io.on('connection', async (socket) => {
 
     // });  
     //on connection disconnect
-   
+
+
+
+
+    //send private message
+    socket.on('sendMessage', async (messageObject) => { 
+      const toOnline = await userOnline.findOne({'user.id': messageObject.to.id });
+      if(toOnline){
+        console.log("Send Direct online mgs");
+        messageObject.date = moment().format('LLLL');
+        socket.to(toOnline.socketSession).emit('instantMessage', { messageObject });
+      }
+
+      socket.emit('displaySentMessage', { messageObject });
+
+      var newMessage = new Chat({ 
+          from: {id: messageObject.from.id, fullname: messageObject.from.fullname },
+          to:   {id: messageObject.to.id, fullname: messageObject.to.fullname },
+          message: messageObject.message,
+          date: moment().format('LLLL')
+      });
+      newMessage.save(function(err, doc) {
+        if(err)console.log(err);
+        else console.log("Message send done"); 
+      });
+    }); 
+
+
+    //load private chat
+    socket.on('loadPrivateChatHistory', async (data) => { 
+      const chatHistory = await Chat.find({ 
+        "from.id" : { "$in": [data.from, data.user] },
+        "to.id" : { "$in": [data.from, data.user] }
+      });
+      socket.emit('privateChatHistory', { chatHistory });
+    }); 
 
 
     //make user online of offline----------------------------------------------------------
@@ -107,6 +144,7 @@ io.on('connection', async (socket) => {
     socket.on('disconnect', async () => {
         console.log("logout a user: "+socket.id );
         await userOnline.deleteOne( {'user.id': userId } );
+        broadCastOnlineUser();
     });
 
     

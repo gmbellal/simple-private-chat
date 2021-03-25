@@ -6,27 +6,7 @@ block content
     
     main.chat-main
         div.chat-sidebar( style="min-height: 600px;" ) 
-            
 
-
-            li.list-item
-                div 
-                    img( src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/488320/profile/profile-80.jpg" class="list-item-image" )
-                div.list-item-content
-                    <h4>Hitesh Kumar</h4>
-                    <p>@hk-skit</p>
-
-
-
-
-
-
-
-
-
-
-
-                
 
 
         div.chat-messages
@@ -34,9 +14,9 @@ block content
 
 
     div.chat-form-container
-        form#chat-form
+        div
             input#msg(type="text" placeholder="Enter Message" required autocomplete="off")
-            button( class="btn" )
+            button( class="btn send-message" )
                 <i class="fas fa-paper-plane"></i> Send
 
     .script 
@@ -46,10 +26,111 @@ block content
     script.
 
         socket = io ( { query: { userId: "#{userId}" } });
+        const chatMessages = document.querySelector('.chat-messages');
+
 
         socket.on('broadcast',(data) =>{
-            console.log(data);
+            let content = '';
+            for(item of data.onlineUserList){
+                if(item.user.id != "#{userId}" ){
+                    content += '<li class="online-user-list" data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" > <img src="https://www.w3schools.com/howto/img_avatar2.png" class="avatar"><span class="display-name">'+item.user.fullname+'</span></li>';
+                }
+            }
+            if(content){
+                $("div.chat-sidebar").html(content);
+            }else{
+                $("div.chat-sidebar").html('All users is offline');
+            } 
         });
+
+
+
+
+
+        //-------------------------------------------------------
+        let = toUserId = '';
+        let = fullname = '';
+        $(document).on("click","li.online-user-list",function() {
+            toUserId = $(this).data("id");
+            fullname = $(this).data("fullname");
+
+            $(this).css('background-color', '#5cb85c');
+            $(this).find('span').css('color', '#ffffff');
+
+            const data = {
+                user: "#{userId}",
+                from: toUserId
+            }
+            socket.emit('loadPrivateChatHistory', data); 
+        });
+        //-------------------------///----------------------------
+
+
+
+
+
+
+
+
+        socket.on('privateChatHistory',(data) =>{
+            console.log(data);
+            $('.chat-messages').html('');
+            for(item of data.chatHistory){
+                const div = document.createElement('div');
+                    div.classList.add('message');
+                    div.innerHTML=`<p class="meta">${item.from.fullname}<span> ${item.date}</span></p>
+                    <p class ="text">
+                        ${item.message}
+                    </p>`;
+                    document.querySelector('.chat-messages').appendChild(div);
+            }
+            chatMessages.scrollTop=chatMessages.scrollHeight;
+        });
+
+
+
+        socket.on('instantMessage',(data) =>{
+            if(data.messageObject.from.id == toUserId){
+                const div = document.createElement('div');
+                    div.classList.add('message');
+                    div.innerHTML=`<p class="meta">${data.messageObject.from.fullname}<span> ${data.messageObject.date}</span></p>
+                    <p class ="text">
+                        ${data.messageObject.message}
+                    </p>`;
+                    document.querySelector('.chat-messages').appendChild(div);
+            }
+            chatMessages.scrollTop=chatMessages.scrollHeight;
+        });
+
+
+        socket.on('displaySentMessage',(data) =>{
+            if(data.messageObject.to.id == toUserId){
+                const div = document.createElement('div');
+                    div.classList.add('message');
+                    div.innerHTML=`<p class="meta">${data.messageObject.from.fullname}<span> ${data.messageObject.date}</span></p>
+                    <p class ="text">
+                        ${data.messageObject.message}
+                    </p>`;
+                    document.querySelector('.chat-messages').appendChild(div);
+            }
+            chatMessages.scrollTop=chatMessages.scrollHeight;
+        });
+
+
+
+        $(document).on("click","button.send-message",function() {
+            var mgs = $("input#msg").val();
+            if(toUserId && mgs ){
+                const messageObject = {
+                    from: {id: "#{userId}", fullname: "#{fullname}" },
+                    to:   {id: toUserId, fullname: fullname },
+                    message: mgs
+                }
+                 $("input#msg").val('');
+                socket.emit('sendMessage', messageObject);
+            }
+        });
+        
 
 
     
