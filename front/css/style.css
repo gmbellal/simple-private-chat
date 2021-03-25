@@ -248,3 +248,17 @@ a {
     margin-left: 225px;
     margin-bottom: 10px;
 }
+
+.online{
+	width: 10px;
+    height: 10px;
+    background: green;
+    border-radius: 5px;
+}
+
+.offline{
+	width: 10px;
+    height: 10px;
+    background: #a0a0a0;;
+    border-radius: 5px;
+}

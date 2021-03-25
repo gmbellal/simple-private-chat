@@ -34,7 +34,12 @@ block content
             let content = '';
             for(item of data.onlineUserList){
                 if(item.user.id != "#{userId}" ){
-                    content += '<li class="online-user-list" data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" > <img src="https://www.w3schools.com/howto/img_avatar2.png" class="avatar"><span class="display-name">'+item.user.fullname+'</span></li>';
+                    if(item.isOnline == true){
+                        content += '<li class="online-user-list" data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" > <div class="online" ></div> <img src="https://www.w3schools.com/howto/img_avatar2.png" class="avatar"><span class="display-name">'+item.user.fullname+'</span></li>';
+                    }else{
+                        content += '<li class="online-user-list" data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" > <div class="offline" ></div> <img src="https://www.w3schools.com/howto/img_avatar2.png" class="avatar"><span class="display-name">'+item.user.fullname+'</span></li>';
+                    }
+                    
                 }
             }
             if(content){

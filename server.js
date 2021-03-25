@@ -7,7 +7,7 @@ const server=http.createServer(app);
 const io = socketio(server);
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { auth } = require('./utils/Auth');
+const { auth, redirecUser } = require('./utils/Auth');
 const jwt = require('jsonwebtoken');
 const PORT = 3000;
 const HOST_NAME = 'localhost';
@@ -42,11 +42,11 @@ const loginController = require('./controllers/login.controller')
 
 
 //Routers----------------------------
-app.get("/",  loginController.login);
-app.get("/login",  loginController.login);
-app.post("/login",  loginController.login);
-app.get("/sign-up",  loginController.signup);
-app.post("/sign-up",  loginController.signup);
+app.get("/", redirecUser, loginController.login);
+app.get("/login", redirecUser,  loginController.login);
+app.post("/login", redirecUser,  loginController.login);
+app.get("/sign-up", redirecUser, loginController.signup);
+app.post("/sign-up", redirecUser,  loginController.signup);
 app.get("/logout",  loginController.logout);
 
 
@@ -170,7 +170,8 @@ io.on('connection', async (socket) => {
     
 
     async function broadCastOnlineUser(){
-      const onlineUserList = await userOnline.find();
+      const onlineUserList = await userOnline.find().sort({isOnline: -1})
+      console.log(onlineUserList);
       io.sockets.emit('broadcast', { onlineUserList });
     }
 

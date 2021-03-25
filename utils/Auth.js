@@ -16,6 +16,24 @@ const auth = (req,res,next) => {
 };
 
 
+
+const redirecUser = (req,res,next) => {    
+  const token = req.session.get('jwtSession');
+  if (token == null) {
+    next();
+  }else{
+    jwt.verify(token, "jgafugy$#54%%ygfsygfff", (err, username) => {
+      if (err){
+        next();
+      }else{
+        return res.redirect("/live-chat");
+      }
+    });
+  }
+};
+
+
 module.exports = {
-    auth
+    auth,
+    redirecUser
 };
