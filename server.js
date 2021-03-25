@@ -171,7 +171,6 @@ io.on('connection', async (socket) => {
 
     async function broadCastOnlineUser(){
       const onlineUserList = await userOnline.find().sort({isOnline: -1})
-      console.log(onlineUserList);
       io.sockets.emit('broadcast', { onlineUserList });
     }
 

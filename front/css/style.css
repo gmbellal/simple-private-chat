@@ -262,3 +262,30 @@ a {
     background: #a0a0a0;;
     border-radius: 5px;
 }
+
+
+
+
+
+
+
+
+
+/* FLASH NOTIFICATION -------------------------- */
+
+.notification{
+	display: none;
+    right: 10px;
+    top: 10px;
+    width: 300px;
+    height: 61px;
+    background: #e66a66;
+    position: fixed;
+    border-radius: 4px;
+    padding: 10px;
+	cursor: pointer;
+}
+
+.notification p{
+	color: #fff;
+}

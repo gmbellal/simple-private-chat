@@ -20,6 +20,13 @@ block content
             button( class="btn send-message" )
                 <i class="fas fa-paper-plane"></i> Send
 
+block popup
+    div.notification
+        p.title
+        p.message
+    
+
+
     .script 
         script(src="/socket.io/socket.io.js")
         //- script(src="js/main.js")
@@ -104,6 +111,14 @@ block content
                         ${data.messageObject.message}
                     </p>`;
                     document.querySelector('.chat-messages').appendChild(div);
+            }else{
+                $('div.notification').find('p.title').text('New message from '+ data.messageObject.from.fullname);
+                $('div.notification').find('p.message').text(data.messageObject.message);
+                
+                $('div.notification').show();
+                setTimeout(function(){
+                   $('div.notification').hide();
+                  }, 4000);
             }
             chatMessages.scrollTop=chatMessages.scrollHeight;
         });
