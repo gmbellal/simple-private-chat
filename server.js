@@ -114,20 +114,22 @@ io.on('connection', async (socket) => {
         "to.id" : { "$in": [data.from, data.user] }
       });
       socket.emit('privateChatHistory', { chatHistory });
-    }); 
+    });
 
 
-    //make user online of offline----------------------------------------------------------
+
+    //make user online or offline----------------------------------------------------------
     const userInfo = await User.findById(userId);
     const isOnline = await userOnline.findOne({'user.id': userInfo.id });
     if(isOnline){
-      await userOnline.updateOne( {'user.id': userId }, { socketSession: socket.id } );
+      await userOnline.updateOne( {'user.id': userId }, { socketSession: socket.id, isOnline: true } );
       console.log("Connection Resume...");
       broadCastOnlineUser();
     }else{
       var connected = new userOnline({ 
         user: { id: userInfo.id, fullname: userInfo.fullname, username: userInfo.username },
-        socketSession: socket.id
+        socketSession: socket.id,
+        isOnline: true,
       });
       connected.save(function(err, doc) {
         if(err)console.log("failed to connect");
@@ -136,14 +138,32 @@ io.on('connection', async (socket) => {
         
       });
     }
-    //make user online of offline----------------------//----------------------------------
+    //make user online of offline----------------------//--------------------------------
 
 
 
-    //on disconnect event------------------------------------------------------------------
+
+
+
+    //Typeing----------------------------------------------------------------------------
+    socket.on('messageTypeing', async (data) => {
+      const isOnline = await userOnline.findOne({'user.id': data.to.id, isOnline: true });
+      if(isOnline){
+        socket.to(isOnline.socketSession).emit('PlayMessageTypeing', { data });
+      }
+    }); 
+    //-----------------------------------------------------------------------------------
+
+
+
+
+
+
+    //on disconnect event----------------------------------------------------------------
     socket.on('disconnect', async () => {
         console.log("logout a user: "+socket.id );
-        await userOnline.deleteOne( {'user.id': userId } );
+        //await userOnline.deleteOne( {'user.id': userId } );
+        await userOnline.updateOne( {'user.id': userId }, { isOnline: false } );
         broadCastOnlineUser();
     });
 

@@ -14,6 +14,7 @@ block content
 
 
     div.chat-form-container
+        p.play-typing &nbsp;
         div
             input#msg(type="text" placeholder="Enter Message" required autocomplete="off")
             button( class="btn send-message" )
@@ -118,7 +119,22 @@ block content
 
 
 
-        $(document).on("click","button.send-message",function() {
+
+        socket.on('PlayMessageTypeing',(data) =>{
+            if(data.data.from.id == toUserId){
+                $('p.play-typing').text(data.data.message);
+
+                setTimeout(function() {
+                    $('p.play-typing').html('&nbsp;');
+                }, 2000);
+            }
+        });
+
+
+
+
+
+        function sendMessage(){
             var mgs = $("input#msg").val();
             if(toUserId && mgs ){
                 const messageObject = {
@@ -129,6 +145,23 @@ block content
                  $("input#msg").val('');
                 socket.emit('sendMessage', messageObject);
             }
+        }
+
+        $(document).on("click","button.send-message",function() {
+            sendMessage();
+        });
+
+        $('input#msg').keyup(function(e){
+            if(e.keyCode == 13){
+                sendMessage();
+            }
+
+            const data = {
+                from: {id: "#{userId}", fullname: "#{fullname}" },
+                to:   {id: toUserId, fullname: fullname },
+                message: "#{fullname}"+' typring...'
+            }
+            socket.emit('messageTypeing', data);
         });
         
 
