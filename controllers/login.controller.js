@@ -22,7 +22,7 @@ const loginController = {
                 );
                 //crerate Session
                 req.session.set('jwtSession', token);
-                res.redirect('/live-chat');
+                return res.redirect('/live-chat');
             }else{
                 //
                 const payloadData = { pageTitle: 'Web Chat : Login', errorMgs: 'Invalid username or password !' };
@@ -36,12 +36,12 @@ const loginController = {
     signup (req, res) {
         if(req.method=="GET"){
             const payloadData = { pageTitle: 'Web Chat : Signup' };
-            res.render('user/signup', payloadData );
+            return res.render('user/signup', payloadData );
         }else{
             var newUser = new User({ fullname: req.body.fullname, username: req.body.username, password: req.body.password, socketSession: '' });
             newUser.save(function(err, doc) {
                 if (err) return res.send(err);
-                res.send("Signup Done");
+                return res.redirect("/login");
             });
         }
     },
@@ -50,7 +50,7 @@ const loginController = {
 
     chat (req, res) {
         const payloadData = { pageTitle: 'Web Chat : Signup', userId: req.user.user_id, fullname: req.user.fullname };
-        res.render('chat/chat', payloadData );
+        return res.render('chat/chat', payloadData );
     },
 
 
