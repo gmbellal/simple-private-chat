@@ -56,8 +56,7 @@ const loginController = {
 
     logout (req, res) {
         req.session.forget('jwtSession');
-        const payloadData = { pageTitle: 'Web Chat : Login', errorMgs: 'Logout Successfully' };
-        return res.render('user/login', payloadData );
+        return res.redirect("/login");
     }
 
 
