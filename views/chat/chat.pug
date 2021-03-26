@@ -67,6 +67,7 @@ block popup
             toUserId = $(this).data("id");
             fullname = $(this).data("fullname");
 
+            $('li.online-user-list').css('background-color', '#fde4e4');
             $(this).css('background-color', '#5cb85c');
             $(this).find('span').css('color', '#ffffff');
 
@@ -86,7 +87,6 @@ block popup
 
 
         socket.on('privateChatHistory',(data) =>{
-            console.log(data);
             $('.chat-messages').html('');
             for(item of data.chatHistory){
                 const div = document.createElement('div');
@@ -174,14 +174,14 @@ block popup
         $('input#msg').keyup(function(e){
             if(e.keyCode == 13){
                 sendMessage();
+            }else{
+                const data = {
+                    from: {id: "#{userId}", fullname: "#{fullname}" },
+                    to:   {id: toUserId, fullname: fullname },
+                    message: "#{fullname}"+' typring....'
+                }
+                socket.emit('messageTypeing', data);
             }
-
-            const data = {
-                from: {id: "#{userId}", fullname: "#{fullname}" },
-                to:   {id: toUserId, fullname: fullname },
-                message: "#{fullname}"+' typring...'
-            }
-            socket.emit('messageTypeing', data);
         });
         
 
