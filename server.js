@@ -127,7 +127,7 @@ io.on('connection', async (socket) => {
     const isOnline = await userOnline.findOne({'user.id': userInfo.id });
     if(isOnline){
       await userOnline.updateOne( {'user.id': userId }, { socketSession: socket.id, isOnline: true } );
-      console.log("Connection Resume...");
+      //console.log("Connection Resume...");
       broadCastOnlineUser();
     }else{
       var connected = new userOnline({ 
@@ -136,10 +136,12 @@ io.on('connection', async (socket) => {
         isOnline: true,
       });
       connected.save(function(err, doc) {
-        if(err)console.log("failed to connect");
-        else console.log("New user connected");
-        broadCastOnlineUser();
-        
+        if(err){
+          console.log("failed to connect");
+        }else {
+          console.log("New user connected");
+          broadCastOnlineUser();
+        }
       });
     }
     //make user online of offline----------------------//--------------------------------
@@ -165,7 +167,7 @@ io.on('connection', async (socket) => {
 
     //on disconnect event----------------------------------------------------------------
     socket.on('disconnect', async () => {
-        console.log("logout a user: "+socket.id );
+        console.log("Disconnect a user: "+socket.id );
         //await userOnline.deleteOne( {'user.id': userId } );
         await userOnline.updateOne( {'user.id': userId }, { isOnline: false } );
         broadCastOnlineUser();
@@ -174,7 +176,8 @@ io.on('connection', async (socket) => {
     
 
     async function broadCastOnlineUser(){
-      const onlineUserList = await userOnline.find().sort({isOnline: -1})
+      //const onlineUserList = await userOnline.find().sort({isOnline: -1});
+      const onlineUserList = await userOnline.find();
       io.sockets.emit('broadcast', { onlineUserList });
     }
 

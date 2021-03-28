@@ -44,14 +44,25 @@ block content
 
         socket = io ( { query: { userId: "#{userId}" } });
         const chatMessages = document.querySelector('.chat-messages');
+
+
         socket.on('broadcast',(data) =>{
             let content = '';
             for(item of data.onlineUserList){
                 if(item.user.id != "#{userId}" ){
                     if(item.isOnline == true){
-                        content +=  '<div class="flex items-center py-1 px-4"><span class="bg-green rounded-full block w-2 h-2 mr-2"></span><span data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" class="direct-message text-white opacity-75 cursor-pointer">'+item.user.fullname+'</span></div>';
+                        if(toUserId == item.user.id){
+                            content +=  '<div class="flex items-center py-1 px-4 bg-teal-dark"><span class="bg-green rounded-full block w-2 h-2 mr-2"></span><span data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" class="direct-message text-white opacity-75 cursor-pointer">'+item.user.fullname+'</span></div>';
+                        }else{
+                            content +=  '<div class="flex items-center py-1 px-4"><span class="bg-green rounded-full block w-2 h-2 mr-2"></span><span data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" class="direct-message text-white opacity-75 cursor-pointer">'+item.user.fullname+'</span></div>';
+                        }
+                        
                     }else{
-                        content +=  '<div class="flex items-center py-1 px-4 opacity-50"><span class="border border-white rounded-full w-2 h-2 mr-2"></span><span data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" class="direct-message text-white cursor-pointer">'+item.user.fullname+'</span></div>';
+                        if(toUserId == item.user.id){
+                            content +=  '<div class="flex items-center py-1 px-4 opacity-50 bg-teal-dark"><span class="border border-white rounded-full w-2 h-2 mr-2"></span><span data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" class="direct-message text-white cursor-pointer">'+item.user.fullname+'</span></div>';
+                        }else{
+                            content +=  '<div class="flex items-center py-1 px-4 opacity-50"><span class="border border-white rounded-full w-2 h-2 mr-2"></span><span data-fullname="'+item.user.fullname+'" data-id="'+item.user.id+'" class="direct-message text-white cursor-pointer">'+item.user.fullname+'</span></div>';
+                        }
                     }
                 }
             }
