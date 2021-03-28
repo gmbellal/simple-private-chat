@@ -22,7 +22,7 @@ const loginController = {
                 );
                 //crerate Session
                 req.session.set('jwtSession', token);
-                return res.redirect('/live-chat');
+                return res.redirect('/conversation');
             }else{
                 //
                 const payloadData = { pageTitle: 'Web Chat : Login', errorMgs: 'Invalid username or password !' };
@@ -57,6 +57,12 @@ const loginController = {
     logout (req, res) {
         req.session.forget('jwtSession');
         return res.redirect("/login");
+    },
+
+
+    conversation(req, res) {
+        const payloadData = { pageTitle: 'Web Chat : Signup', userId: req.user.user_id, fullname: req.user.fullname };
+        return res.render('conversation/chat', payloadData);
     }
 
 

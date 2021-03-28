@@ -49,9 +49,13 @@ app.get("/sign-up", redirecUser, loginController.signup);
 app.post("/sign-up", redirecUser,  loginController.signup);
 app.get("/logout",  loginController.logout);
 
+//conversation
+app.get("/conversation", auth, loginController.conversation);
+app.get("/live-chat", auth, loginController.conversation);
+
 
 //chat
-app.get("/live-chat", auth,  loginController.chat);
+app.get("/old-chat", auth,  loginController.chat);
 
 
 

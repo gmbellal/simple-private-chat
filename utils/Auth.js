@@ -26,7 +26,7 @@ const redirecUser = (req,res,next) => {
       if (err){
         next();
       }else{
-        return res.redirect("/live-chat");
+        return res.redirect("/conversation");
       }
     });
   }
